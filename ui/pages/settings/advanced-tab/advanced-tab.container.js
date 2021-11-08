@@ -12,6 +12,8 @@ import {
   turnThreeBoxSyncingOnAndInitialize,
   setUseNonceField,
   setIpfsGateway,
+  setIpfsIpnsHandlerShouldUpdate,
+  setIpfsIpnsUrlResolving,
   setLedgerLivePreference,
   setDismissSeedBackUpReminder,
 } from '../../../store/actions';
@@ -30,6 +32,7 @@ export const mapStateToProps = (state) => {
     threeBoxDisabled,
     useNonceField,
     ipfsGateway,
+    ipfsIpnsEnabled,
     ledgerTransportType,
     dismissSeedBackUpReminder,
   } = metamask;
@@ -52,6 +55,7 @@ export const mapStateToProps = (state) => {
     threeBoxDisabled,
     useNonceField,
     ipfsGateway,
+    ipfsIpnsEnabled,
     ledgerTransportType,
     dismissSeedBackUpReminder,
     userHasALedgerAccount,
@@ -86,6 +90,12 @@ export const mapDispatchToProps = (dispatch) => {
     },
     setIpfsGateway: (value) => {
       return dispatch(setIpfsGateway(value));
+    },
+    setIpfsIpnsUrlResolving: (value) => {
+      dispatch(setIpfsIpnsUrlResolving(value));
+    },
+    setIpfsIpnsHandlerShouldUpdate: (value) => {
+      dispatch(setIpfsIpnsHandlerShouldUpdate(value));
     },
     setLedgerLivePreference: (value) => {
       return dispatch(setLedgerLivePreference(value));

@@ -5,9 +5,11 @@ import { exportAsFile } from '../../../helpers/utils/util';
 import ToggleButton from '../../../components/ui/toggle-button';
 import TextField from '../../../components/ui/text-field';
 import Button from '../../../components/ui/button';
-import { MOBILE_SYNC_ROUTE } from '../../../helpers/constants/routes';
+import { MOBILE_SYNC_ROUTE, IPFS_IPNS_URL_RESOLVING } from '../../../helpers/constants/routes';
 import Dropdown from '../../../components/ui/dropdown';
 import Dialog from '../../../components/ui/dialog';
+import { getPlatform } from '../../../../../app/scripts/lib/util';
+import { PLATFORM_CHROME } from '../../../../../shared/constants/app';
 
 import {
   LEDGER_TRANSPORT_TYPES,
@@ -42,6 +44,9 @@ export default class AdvancedTab extends PureComponent {
     threeBoxDisabled: PropTypes.bool.isRequired,
     setIpfsGateway: PropTypes.func.isRequired,
     ipfsGateway: PropTypes.string.isRequired,
+    ipfsIpnsEnabled: PropTypes.bool,
+    setIpfsIpnsUrlResolving: PropTypes.func,
+    setIpfsIpnsHandlerShouldUpdate: PropTypes.func,
     ledgerTransportType: PropTypes.oneOf(Object.values(LEDGER_TRANSPORT_TYPES)),
     setLedgerLivePreference: PropTypes.func.isRequired,
     setDismissSeedBackUpReminder: PropTypes.func.isRequired,
@@ -599,6 +604,55 @@ export default class AdvancedTab extends PureComponent {
     );
   }
 
+  renderIpfsUrlResolveControl() {
+    const { t } = this.context;
+    const {
+      ipfsIpnsEnabled,
+      setIpfsIpnsUrlResolving,
+      setIpfsIpnsHandlerShouldUpdate,
+    } = this.props;
+
+    const enabled = ipfsIpnsEnabled;
+
+    if(getPlatform() == PLATFORM_CHROME) {
+      return (
+        <div
+          className="settings-page__content-row"
+          data-testid="advanced-setting-ipfsurl"
+        >
+          <div className="settings-page__content-item">
+            <span>Resolve IPFS urls (experimental)</span>
+            <div className="settings-page__content-description">
+              Turn on to have IPFS (ipfs://) and IPNS (ipns://) URLs being
+              resolved by Metamask. This feature is currently experimental; use at
+              your own risk.
+            </div>
+          </div>
+          <div
+            className={classnames('settings-page__content-item', {
+              'settings-page__content-item--disabled': enabled,
+            })}
+          >
+            <div className="settings-page__content-item-col">
+              <ToggleButton
+                value={enabled}
+                onToggle={() => {
+                  setIpfsIpnsUrlResolving(!enabled);
+                  setIpfsIpnsHandlerShouldUpdate(true);
+                  global.platform.openExtensionInBrowser(IPFS_IPNS_URL_RESOLVING);
+                }}
+                offLabel={t('off')}
+                onLabel={t('on')}
+              />
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      return;
+    }
+  }
+
   renderDismissSeedBackupReminderControl() {
     const { t } = this.context;
     const {
@@ -648,6 +702,7 @@ export default class AdvancedTab extends PureComponent {
         {this.renderAutoLockTimeLimit()}
         {this.renderThreeBoxControl()}
         {this.renderIpfsGatewayControl()}
+        {this.renderIpfsUrlResolveControl()}
         {this.renderLedgerLiveControl()}
         {this.renderDismissSeedBackupReminderControl()}
       </div>

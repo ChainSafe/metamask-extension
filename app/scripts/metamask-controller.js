@@ -75,7 +75,8 @@ import accountImporter from './account-import-strategies';
 import seedPhraseVerifier from './lib/seed-phrase-verifier';
 import MetaMetricsController from './controllers/metametrics';
 import { segment } from './lib/segment';
-import createMetaRPCHandler from './lib/createMetaRPCHandler';
+import createMetaRPCHandler from './lib/createMetaRPCHandler'
+import IpfsIpnsController from './controllers/ipfs';;
 
 export const METAMASK_CONTROLLER_EVENTS = {
   // Fired after state changes that impact the extension badge (unapproved msg count)
@@ -562,6 +563,8 @@ export default class MetamaskController extends EventEmitter {
       this.messageManager.clearUnapproved();
     });
 
+    this.ipfsIpnsController = new IpfsIpnsController();
+
     // ensure isClientOpenAndUnlocked is updated when memState updates
     this.on('update', (memState) => this._onStateUpdate(memState));
 
@@ -585,6 +588,7 @@ export default class MetamaskController extends EventEmitter {
       GasFeeController: this.gasFeeController,
       TokenListController: this.tokenListController,
       TokensController: this.tokensController,
+      IpfsIpnsController: this.ipfsIpnsController,
     });
 
     this.memStore = new ComposableObservableStore({
@@ -619,6 +623,7 @@ export default class MetamaskController extends EventEmitter {
         GasFeeController: this.gasFeeController,
         TokenListController: this.tokenListController,
         TokensController: this.tokensController,
+        IpfsIpnsController: this.ipfsIpnsController,
       },
       controllerMessenger: this.controllerMessenger,
     });
@@ -818,6 +823,10 @@ export default class MetamaskController extends EventEmitter {
         this.preferencesController,
       ),
       setIpfsGateway: this.setIpfsGateway.bind(this),
+      setIpfsIpnsUrlResolving: this.setIpfsIpnsUrlResolving.bind(this),
+      setIpfsIpnsHandlerShouldUpdate: this.setIpfsIpnsHandlerShouldUpdate.bind(
+        this,
+      ),
       setParticipateInMetaMetrics: this.setParticipateInMetaMetrics.bind(this),
       setCurrentLocale: this.setCurrentLocale.bind(this),
       markPasswordForgotten: this.markPasswordForgotten.bind(this),
@@ -2982,6 +2991,43 @@ export default class MetamaskController extends EventEmitter {
       return;
     }
   }
+
+  /**
+   * Sets IPFS and IPNS URL resolving
+   * @param {*} bool
+   * @param {*} cb
+   * @returns
+   */
+   setIpfsIpnsUrlResolving(bool, cb) {
+    try {
+      this.ipfsIpnsController.setIpfsIpnsUrlResolving(bool);
+      cb(null);
+      return;
+    } catch (err) {
+      cb(err);
+      // eslint-disable-next-line no-useless-return
+      return;
+    }
+  }
+
+  /**
+   * Sets if protocol handlers for ipfs and ipns should be updated
+   * @param {*} bool
+   * @param {*} cb
+   * @returns
+   */
+  setIpfsIpnsHandlerShouldUpdate(bool, cb) {
+    try {
+      this.ipfsIpnsController.setIpfsIpnsHandlerShouldUpdate(bool);
+      cb(null);
+      return;
+    } catch (err) {
+      cb(err);
+      // eslint-disable-next-line no-useless-return
+      return;
+    }
+  }
+
 
   /**
    * Sets the Ledger Live preference to use for Ledger hardware wallet support

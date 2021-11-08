@@ -32,6 +32,7 @@ import UnlockPage from '../unlock-page';
 import Alerts from '../../components/app/alerts';
 import Asset from '../asset';
 import OnboardingAppHeader from '../onboarding-flow/onboarding-app-header/onboarding-app-header';
+import IpfsIpnsUrlHandling from '../../ipfs-enable';
 
 import {
   IMPORT_TOKEN_ROUTE,
@@ -55,6 +56,7 @@ import {
   CONFIRM_IMPORT_TOKEN_ROUTE,
   INITIALIZE_ROUTE,
   ONBOARDING_ROUTE,
+  IPFS_IPNS_URL_RESOLVING,
 } from '../../helpers/constants/routes';
 
 import {
@@ -173,6 +175,10 @@ export default class Routes extends Component {
         <Authenticated
           path={`${CONNECT_ROUTE}/:id`}
           component={PermissionsConnect}
+        />
+        <Authenticated
+          path={IPFS_IPNS_URL_RESOLVING}
+          component={IpfsIpnsUrlHandling}
         />
         <Authenticated path={`${ASSET_ROUTE}/:asset`} component={Asset} />
         <Authenticated path={DEFAULT_ROUTE} component={Home} />

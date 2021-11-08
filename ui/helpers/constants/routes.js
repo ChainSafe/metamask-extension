@@ -38,6 +38,7 @@ const AWAITING_SIGNATURES_ROUTE = '/swaps/awaiting-signatures';
 const AWAITING_SWAP_ROUTE = '/swaps/awaiting-swap';
 const SWAPS_ERROR_ROUTE = '/swaps/swaps-error';
 const SWAPS_MAINTENANCE_ROUTE = '/swaps/maintenance';
+const IPFS_IPNS_URL_RESOLVING = '/ipfs-ipns-resolve';
 
 const INITIALIZE_ROUTE = '/initialize';
 const INITIALIZE_WELCOME_ROUTE = '/initialize/welcome';
@@ -151,6 +152,7 @@ const PATH_NAME_MAP = {
   [LOADING_QUOTES_ROUTE]: 'Swaps Loading Quotes Page',
   [AWAITING_SWAP_ROUTE]: 'Swaps Awaiting Swaps Page',
   [SWAPS_ERROR_ROUTE]: 'Swaps Error Page',
+  [IPFS_IPNS_URL_RESOLVING]: 'Ipfs and Ipns URL Resolving Info Page',
 };
 
 export {
@@ -218,6 +220,7 @@ export {
   AWAITING_SIGNATURES_ROUTE,
   SWAPS_ERROR_ROUTE,
   SWAPS_MAINTENANCE_ROUTE,
+  IPFS_IPNS_URL_RESOLVING,
   ONBOARDING_ROUTE,
   ONBOARDING_HELP_US_IMPROVE_ROUTE,
   ONBOARDING_CREATE_PASSWORD_ROUTE,

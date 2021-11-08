@@ -8,6 +8,8 @@ import resolveEnsToIpfsContentId from './resolver';
 const fetchWithTimeout = getFetchWithTimeout(SECOND * 30);
 
 const supportedTopLevelDomains = ['eth'];
+const supportedProtocols = ['ipfs', 'ipns'];
+const supportedBrowsers = ['chrome-extension']
 
 export default function setupEnsIpfsResolver({
   provider,
@@ -16,9 +18,21 @@ export default function setupEnsIpfsResolver({
 }) {
   // install listener
   const urlPatterns = supportedTopLevelDomains.map((tld) => `*://*.${tld}/*`);
+
+  for (const browser of supportedBrowsers) {
+    // only setup ipfs ipns handler on supported browsers
+    if(window.location.href.startsWith(browser)) {
+      extension.webRequest.onBeforeRequest.addListener(ipfsIpnsUrlHandler, {
+        types: ['main_frame'],
+        urls: [`${browser}://*/*`],
+      });
+      break;
+    }
+  }
+
   extension.webRequest.onErrorOccurred.addListener(webRequestDidFail, {
-    urls: urlPatterns,
     types: ['main_frame'],
+    urls: urlPatterns,
   });
 
   // return api object
@@ -26,8 +40,27 @@ export default function setupEnsIpfsResolver({
     // uninstall listener
     remove() {
       extension.webRequest.onErrorOccurred.removeListener(webRequestDidFail);
+      extension.webRequest.onBeforeRequest.removeListener(ipfsIpnsUrlHandler);
     },
   };
+
+  async function ipfsIpnsUrlHandler(details) {
+    const { tabId, url } = details;
+    // ignore requests that are not associated with tabs
+    if (tabId === -1) {
+      return;
+    }
+
+    const unUrl = unescape(url);
+    supportedProtocols.forEach((protocol) => {
+      if (unUrl.includes(`${protocol}:`)) {
+        const identifier = unUrl.split(`${protocol}:`)[1];
+        const ipfsGateway = getIpfsGateway();
+        const newUrl = `https://${ipfsGateway}/${protocol}${identifier}`;
+        extension.tabs.update(tabId, { url: newUrl });
+      }
+    });
+  }
 
   async function webRequestDidFail(details) {
     const { tabId, url } = details;
